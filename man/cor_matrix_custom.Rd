@@ -2,19 +2,11 @@
 % Please edit documentation in R/itemrest_core.R
 \name{cor_matrix_custom}
 \alias{cor_matrix_custom}
-\title{Compute Correlation Matrix}
+\title{Calculate a correlation matrix.}
 \usage{
 cor_matrix_custom(data, method = "polychoric")
 }
-\arguments{
-\item{data}{A data.frame or matrix of item responses.}
-
-\item{method}{Correlation method: "polychoric" (default) or "pearson".}
-}
-\value{
-A correlation matrix.
-}
 \description{
-Computes a correlation matrix using either polychoric or Pearson correlations.
+Calculate a correlation matrix.
 }
 \keyword{internal}

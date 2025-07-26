@@ -2,19 +2,11 @@
 % Please edit documentation in R/itemrest_core.R
 \name{determine_n_factors}
 \alias{determine_n_factors}
-\title{Determine Number of Factors via Parallel Analysis}
+\title{Determine the number of factors using Parallel Analysis.}
 \usage{
 determine_n_factors(data, cor_method = "pearson")
 }
-\arguments{
-\item{data}{A data.frame or matrix of item responses.}
-
-\item{cor_method}{Correlation method to use ("pearson" or "polychoric").}
-}
-\value{
-An integer indicating the suggested number of factors.
-}
 \description{
-Uses parallel analysis to estimate the optimal number of factors for EFA.
+Determine the number of factors using Parallel Analysis.
 }
 \keyword{internal}

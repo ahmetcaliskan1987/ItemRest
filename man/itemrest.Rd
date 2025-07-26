@@ -2,35 +2,33 @@
 % Please edit documentation in R/itemrest_core.R
 \name{itemrest}
 \alias{itemrest}
-\title{Automated Item Removal for Exploratory Factor Analysis (EFA)}
+\title{Evaluate Item Removal Strategies for Exploratory Factor Analysis (EFA)}
 \usage{
 itemrest(
   data,
   cor_method = "pearson",
   n_factors = NULL,
   extract = "uls",
-  rotate = "oblimin",
-  report = "optimal"
+  rotate = "oblimin"
 )
 }
 \arguments{
-\item{data}{A data.frame or matrix containing item responses.}
+\item{data}{A numeric \code{data.frame} or \code{matrix} for the analysis.}
 
-\item{cor_method}{Correlation method: "pearson" or "polychoric". Default is "pearson".}
+\item{cor_method}{The correlation method to use, e.g., \code{"pearson"} or \code{"polychoric"}.}
 
-\item{n_factors}{Number of factors to extract. If NULL, parallel analysis is used.}
+\item{n_factors}{The number of factors. If \code{NULL}, it's determined automatically by parallel analysis.}
 
-\item{extract}{Extraction method for EFA. Common options include "uls", "ml", etc.}
+\item{extract}{The factor extraction (estimation) method. See \code{psych::fa}. Default is \code{"uls"}.}
 
-\item{rotate}{Rotation method for EFA. Common options include "oblimin", "varimax", etc.}
-
-\item{report}{Whether to display all tested strategies or only the optimal ones ("all" or "optimal").}
+\item{rotate}{The rotation method. See \code{psych::fa}. Default is \code{"oblimin"}.}
 }
 \value{
-Console output and a summary table of evaluated removal strategies.
+An object of class \code{itemrest_result}.
 }
 \description{
-Applies EFA to a given dataset and identifies problematic items based on cross-loading and low-loading criteria.
-Automatically tests all combinations of flagged items and summarizes explained variance, Cronbach's alpha,
-and factor loading ranges. Offers optimal strategy selection based on absence of cross-loading.
+This function identifies low-quality items (low-loading or cross-loading)
+based on initial EFA results, then tests different combinations of removing
+these items to find optimal model fit. It returns an object containing all
+results. It only prints progress information to the console during computation.
 }

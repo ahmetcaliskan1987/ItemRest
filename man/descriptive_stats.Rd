@@ -2,17 +2,11 @@
 % Please edit documentation in R/itemrest_core.R
 \name{descriptive_stats}
 \alias{descriptive_stats}
-\title{Display Basic Descriptive Statistics for an Item Set}
+\title{Calculate basic descriptive statistics for a dataset.}
 \usage{
 descriptive_stats(data)
 }
-\arguments{
-\item{data}{A data.frame or matrix of item responses.}
-}
-\value{
-Printed summary output to the console.
-}
 \description{
-Prints number of items, number of observations, and min/max values in the dataset.
+Calculate basic descriptive statistics for a dataset.
 }
 \keyword{internal}

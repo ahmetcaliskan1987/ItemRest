@@ -2,17 +2,11 @@
 % Please edit documentation in R/itemrest_core.R
 \name{sort_item_ids}
 \alias{sort_item_ids}
-\title{Sort Item IDs by Numeric Order}
+\title{Sort item IDs numerically.}
 \usage{
 sort_item_ids(x)
 }
-\arguments{
-\item{x}{A character vector of item names or IDs.}
-}
-\value{
-A sorted character vector of item names.
-}
 \description{
-Sorts item identifiers based on embedded numeric values.
+Sort item IDs numerically.
 }
 \keyword{internal}

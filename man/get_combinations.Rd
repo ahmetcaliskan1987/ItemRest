@@ -2,17 +2,11 @@
 % Please edit documentation in R/itemrest_core.R
 \name{get_combinations}
 \alias{get_combinations}
-\title{Generate All Non-Empty Combinations of Items}
+\title{Generate combinations of items to remove.}
 \usage{
 get_combinations(items)
 }
-\arguments{
-\item{items}{A character vector of item names.}
-}
-\value{
-A list of character vectors, each representing a combination of items.
-}
 \description{
-Produces a list of all possible non-empty combinations of items for systematic testing.
+Generate combinations of items to remove.
 }
 \keyword{internal}

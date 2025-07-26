@@ -2,7 +2,7 @@
 % Please edit documentation in R/itemrest_core.R
 \name{identify_problem_items}
 \alias{identify_problem_items}
-\title{Identify Problematic Items in EFA Loadings}
+\title{Identify problematic items (low-loading or cross-loading).}
 \usage{
 identify_problem_items(
   efa_res,
@@ -12,21 +12,7 @@ identify_problem_items(
   low_loading_thresh = 0.3
 )
 }
-\arguments{
-\item{efa_res}{Output from \code{efa_custom()}, containing factor loadings.}
-
-\item{primary_cutoff}{Minimum acceptable primary factor loading.}
-
-\item{secondary_max}{Maximum acceptable secondary loading.}
-
-\item{diff_min}{Minimum difference between primary and secondary loadings.}
-
-\item{low_loading_thresh}{Threshold for identifying low-loading items.}
-}
-\value{
-A list with three character vectors: \code{cross_3}, \code{cross_2}, and \code{low_loading}.
-}
 \description{
-Detects items with cross-loadings (on 2 or more factors) and items with low loadings across all factors.
+Identify problematic items (low-loading or cross-loading).
 }
 \keyword{internal}

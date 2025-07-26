@@ -1,6 +1,6 @@
 Package: ItemRest
 Title: Automated Item Removal Strategies in Explatory Factor Analysis
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Ahmet", "Çalışkan", , "ahmet-caliskan@hotmail.com", role = c("aut", "cre"))
 Description: Provides tools for identifying and testing low-quality items in exploratory factor analysis (EFA)
@@ -16,6 +16,12 @@ Imports:
     psych,
     GPArotation,
     EFAtools,
-    qgraph
+    qgraph,
+    utils,
+    gtools
 URL: https://github.com/ahmetcaliskan1987/ItemRest
 BugReports: https://github.com/ahmetcaliskan1987/ItemRest/issues
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

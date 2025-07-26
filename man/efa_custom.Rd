@@ -2,7 +2,7 @@
 % Please edit documentation in R/itemrest_core.R
 \name{efa_custom}
 \alias{efa_custom}
-\title{Run Exploratory Factor Analysis (EFA)}
+\title{Run a custom EFA.}
 \usage{
 efa_custom(
   data,
@@ -12,22 +12,7 @@ efa_custom(
   rotate = "oblimin"
 )
 }
-\arguments{
-\item{data}{A data.frame or matrix of item responses.}
-
-\item{n_factors}{Number of factors to extract.}
-
-\item{cor_method}{Correlation method: "polychoric" or "pearson".}
-
-\item{extract}{Extraction method (e.g., "uls", "ml").}
-
-\item{rotate}{Rotation method (e.g., "oblimin", "varimax").}
-}
-\value{
-A list containing the EFA object, Cronbach's alpha, explained variance, and loading matrix.
-}
 \description{
-Performs EFA with specified number of factors, correlation method, extraction method, and rotation.
-Also calculates Cronbach's alpha and explained variance.
+Run a custom EFA.
 }
 \keyword{internal}

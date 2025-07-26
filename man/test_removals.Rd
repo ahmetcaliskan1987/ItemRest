@@ -2,30 +2,11 @@
 % Please edit documentation in R/itemrest_core.R
 \name{test_removals}
 \alias{test_removals}
-\title{Evaluate Item Removal Strategies}
+\title{Test removal strategies and build a summary table.}
 \usage{
 test_removals(data, base_items, combs, n_factors, cor_method, extract, rotate)
 }
-\arguments{
-\item{data}{A data.frame of item responses.}
-
-\item{base_items}{A character vector of all item names in the original set.}
-
-\item{combs}{A list of item combinations to remove.}
-
-\item{n_factors}{Number of factors to extract in EFA.}
-
-\item{cor_method}{Correlation method: "pearson" or "polychoric".}
-
-\item{extract}{Extraction method (e.g., "uls", "ml").}
-
-\item{rotate}{Rotation method (e.g., "oblimin", "varimax").}
-}
-\value{
-A list containing EFA results and a summary table for each tested strategy.
-}
 \description{
-Tests all combinations of problematic items by removing them and re-running EFA.
-Collects summary statistics such as explained variance, factor loadings, and reliability.
+Test removal strategies and build a summary table.
 }
 \keyword{internal}
