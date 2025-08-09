@@ -1,4 +1,3 @@
-utils::globalVariables(c("Cross_Loading"))
 # ===================================================================
 # NOTE ON PACKAGE DEPENDENCIES
 # ===================================================================
@@ -47,7 +46,7 @@ determine_n_factors <- function(data, cor_method = "pearson") {
 
 #' Run a custom EFA.
 #' @keywords internal
-efa_custom <- function(data, n_factors = 1, cor_method = "polychoric", extract = "uls", rotate = "oblimin") {
+eFA_custom <- function(data, n_factors = 1, cor_method = "polychoric", extract = "uls", rotate = "oblimin") {
   cor_mat <- cor_matrix_custom(data, cor_method)
   efa <- NULL
   invisible(utils::capture.output({
@@ -65,34 +64,47 @@ sort_item_ids <- function(x) {
   gtools::mixedsort(x)
 }
 
-#' Identify problematic items (low-loading or cross-loading).
-#' @keywords internal
+# ' Identify problematic items (low-loading or cross-loading).
+# ' Düzeltilmiş Fonksiyon (Kullanıcının önerdiği mantığa geri dönüldü)
+# ' @keywords internal
 identify_problem_items <- function(efa_res, primary_cutoff = 0.40, secondary_max = 0.30, diff_min = 0.20, low_loading_thresh = 0.30) {
   loadings <- abs(efa_res$loadings)
   items <- rownames(loadings)
-  cross_loading_items <- c()
-  low_loading_items <- c()
-  if (ncol(loadings) == 0) return(list(cross_loading = c(), low_loading = c()))
+  cross_3 <- c()
+  cross_2 <- c()
+  low_loading <- c()
+  if (ncol(loadings) == 0) return(list(cross_3 = c(), cross_2 = c(), low_loading = c()))
+
   for (i in 1:nrow(loadings)) {
     item_loads <- loadings[i, ]
-    # First, check for low loadings. If an item loads poorly everywhere,
-    # it's a low-quality item, and we don't need to check for cross-loading.
+    primary <- max(item_loads, na.rm = TRUE)
+
+    # Düşük yüklü maddeleri kontrol et
     if (all(item_loads < low_loading_thresh, na.rm = TRUE)) {
-      low_loading_items <- c(low_loading_items, items[i])
-      next # Move to the next item
+      low_loading <- c(low_loading, items[i])
+      next
     }
-    # If the item is not low-loading, check for cross-loading (only if nfactors > 1).
+
+    # Çapraz yüklü maddeleri kontrol et (sadece 1'den fazla faktör varsa)
     if (ncol(loadings) > 1) {
-      primary <- max(item_loads, na.rm = TRUE)
-      secondary <- sort(item_loads, decreasing = TRUE)[2]
-      is_cross_loading <- (primary < primary_cutoff) || (secondary > secondary_max) || ((primary - secondary) < diff_min)
-      if (is_cross_loading) {
-        cross_loading_items <- c(cross_loading_items, items[i])
+      sorted_loads <- sort(item_loads, decreasing = TRUE)
+      secondary <- sorted_loads[2]
+
+      secondary_check <- !(primary >= primary_cutoff && secondary <= secondary_max && (primary - secondary) >= diff_min)
+
+      if (secondary_check) {
+        # Problemli yük varsa, kaç yükün secondary_max'ten büyük olduğuna bak
+        if (sum(item_loads >= secondary_max, na.rm = TRUE) >= 3) {
+          cross_3 <- c(cross_3, items[i])
+        } else if (sum(item_loads >= secondary_max, na.rm = TRUE) == 2) {
+          cross_2 <- c(cross_2, items[i])
+        }
       }
     }
   }
-  list(cross_loading = unique(cross_loading_items), low_loading = unique(low_loading_items))
+  list(cross_3 = unique(cross_3), cross_2 = unique(cross_2), low_loading = unique(low_loading))
 }
+
 
 #' Generate combinations of items to remove.
 #' @keywords internal
@@ -115,7 +127,9 @@ test_removals <- function(data, base_items, combs, n_factors, cor_method, extrac
     if (length(remaining_items) > n_factors) {
       efa_out <- efa_custom(data[, remaining_items, drop = FALSE], n_factors, cor_method, extract, rotate)
       prob_items_test <- identify_problem_items(efa_out)
-      has_cross_loading <- length(prob_items_test$cross_loading) > 0
+
+      has_cross_loading <- length(prob_items_test$cross_2) > 0 || length(prob_items_test$cross_3) > 0
+
       removed_label <- if (length(items_to_remove) == 0) "None" else paste(sort_item_ids(items_to_remove), collapse = "-")
       load_mat <- as.matrix(efa_out$loadings)
       threshold <- 0.30
@@ -135,10 +149,7 @@ test_removals <- function(data, base_items, combs, n_factors, cor_method, extrac
   summary_table <- do.call(rbind, summary_list)
   summary_table <- summary_table[!duplicated(summary_table$Removed_Items), ]
 
-  # New sorting logic
   if (nrow(summary_table) > 0) {
-    # 1. Sort by Cross_Loading ('No' comes first).
-    # 2. Then, sort by Total_Explained_Var (descending).
     sorted_indices <- order(summary_table$Cross_Loading, -summary_table$Total_Explained_Var)
     summary_table <- summary_table[sorted_indices, ]
   }
@@ -166,9 +177,6 @@ test_removals <- function(data, base_items, combs, n_factors, cor_method, extrac
 #' @param rotate The rotation method. See `psych::fa`. Default is `"oblimin"`.
 #'
 #' @return An object of class `itemrest_result`.
-#'
-#' @import EFAtools
-#' @import GPArotation
 #' @export
 itemrest <- function(data,
                      cor_method = "pearson",
@@ -188,8 +196,10 @@ itemrest <- function(data,
   }
   descriptives <- descriptive_stats(data)
   initial_efa <- efa_custom(data, n_factors_determined, cor_method, extract, rotate)
+
+  # Problemli maddeleri tespit et (yeni fonksiyona göre)
   problem_items <- identify_problem_items(initial_efa)
-  all_problem_items <- sort_item_ids(unique(c(problem_items$cross_loading, problem_items$low_loading)))
+  all_problem_items <- sort_item_ids(unique(c(problem_items$cross_3, problem_items$cross_2, problem_items$low_loading)))
 
   # Step 1: Print the initial report to the console
   cat("--- Settings and Descriptive Statistics ---\n")
@@ -206,7 +216,11 @@ itemrest <- function(data,
   cat("Cronbach's Alpha:", formatC(initial_efa$alpha, digits = 3, format = "f"), "\n")
   cat("Total Explained Variance:", paste0("% ", formatC(initial_efa$explained_var * 100, digits = 2, format = "f")), "\n")
   cat("Low-loading Items:", ifelse(length(problem_items$low_loading) == 0, "None", paste(problem_items$low_loading, collapse = ", ")), "\n")
-  cat("Cross-loading Items:", ifelse(length(problem_items$cross_loading) == 0, "None", paste(problem_items$cross_loading, collapse = ", ")), "\n")
+
+  # Çapraz yüklenen maddeleri doğru şekilde birleştirerek yazdır
+  cross_items_combined <- c(problem_items$cross_2, problem_items$cross_3)
+  cat("Cross-loading Items:", ifelse(length(cross_items_combined) == 0, "None", paste(unique(sort_item_ids(cross_items_combined)), collapse = ", ")), "\n")
+
   cat("\nAll Identified Low-Quality Items:", ifelse(length(all_problem_items) == 0, "None", paste(all_problem_items, collapse = ", ")), "\n")
 
   # --- Test Removal Strategies ---
@@ -222,7 +236,6 @@ itemrest <- function(data,
 
     optimal_candidates <- subset(removal_summary, Cross_Loading == "No")
     if (nrow(optimal_candidates) > 0) {
-      # The optimal strategy is the first row of the fully sorted summary table
       optimal_strategy <- removal_summary[removal_summary$Cross_Loading == "No", ][1, ]
     }
   }
@@ -231,11 +244,15 @@ itemrest <- function(data,
   output <- list(
     descriptive_stats = descriptives,
     initial_efa = initial_efa,
-    problem_items = problem_items,
+    problem_items = problem_items, # Bu liste artık cross_3 ve cross_2'yi içeriyor
     all_problem_items_combined = all_problem_items,
     removal_summary = removal_summary,
-    # The optimal_strategy object is now a subset of the main summary
-    optimal_strategy = if (exists("optimal_strategy")) optimal_strategy else NULL
+    optimal_strategy = if (exists("optimal_strategy")) optimal_strategy else NULL,
+    settings = list(
+      n_factors = n_factors_determined, cor_method = cor_method,
+      extract = extract, rotate = rotate,
+      auto_n_factors = auto_n_factors_flag
+    )
   )
 
   # Assign the custom class

@@ -2,5 +2,3 @@
 
 S3method(print,itemrest_result)
 export(itemrest)
-import(EFAtools)
-import(GPArotation)
