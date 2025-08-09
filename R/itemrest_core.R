@@ -46,7 +46,7 @@ determine_n_factors <- function(data, cor_method = "pearson") {
 
 #' Run a custom EFA.
 #' @keywords internal
-eFA_custom <- function(data, n_factors = 1, cor_method = "polychoric", extract = "uls", rotate = "oblimin") {
+efa_custom <- function(data, n_factors = 1, cor_method = "polychoric", extract = "uls", rotate = "oblimin") {
   cor_mat <- cor_matrix_custom(data, cor_method)
   efa <- NULL
   invisible(utils::capture.output({
