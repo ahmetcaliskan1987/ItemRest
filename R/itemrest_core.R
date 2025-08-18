@@ -46,7 +46,7 @@ determine_n_factors <- function(data, cor_method = "pearson") {
 
 #' Run a custom EFA.
 #' @keywords internal
-eFA_custom <- function(data, n_factors = 1, cor_method = "polychoric", extract = "uls", rotate = "oblimin") {
+efa_custom <- function(data, n_factors = 1, cor_method = "polychoric", extract = "uls", rotate = "oblimin") {
   cor_mat <- cor_matrix_custom(data, cor_method)
   efa <- NULL
   invisible(utils::capture.output({
@@ -65,8 +65,7 @@ sort_item_ids <- function(x) {
 }
 
 # ' Identify problematic items (low-loading or cross-loading).
-# ' Düzeltilmiş Fonksiyon (Kullanıcının önerdiği mantığa geri dönüldü)
-# ' @keywords internal
+#' @keywords internal
 identify_problem_items <- function(efa_res, primary_cutoff = 0.40, secondary_max = 0.30, diff_min = 0.20, low_loading_thresh = 0.30) {
   loadings <- abs(efa_res$loadings)
   items <- rownames(loadings)
@@ -79,21 +78,18 @@ identify_problem_items <- function(efa_res, primary_cutoff = 0.40, secondary_max
     item_loads <- loadings[i, ]
     primary <- max(item_loads, na.rm = TRUE)
 
-    # Düşük yüklü maddeleri kontrol et
     if (all(item_loads < low_loading_thresh, na.rm = TRUE)) {
       low_loading <- c(low_loading, items[i])
       next
     }
 
-    # Çapraz yüklü maddeleri kontrol et (sadece 1'den fazla faktör varsa)
     if (ncol(loadings) > 1) {
       sorted_loads <- sort(item_loads, decreasing = TRUE)
       secondary <- sorted_loads[2]
 
-      secondary_check <- !(primary >= primary_cutoff && secondary <= secondary_max && (primary - secondary) >= diff_min)
+      secondary_check <- !(primary >= primary_cutoff && secondary < secondary_max && (primary - secondary) >= diff_min)
 
       if (secondary_check) {
-        # Problemli yük varsa, kaç yükün secondary_max'ten büyük olduğuna bak
         if (sum(item_loads >= secondary_max, na.rm = TRUE) >= 3) {
           cross_3 <- c(cross_3, items[i])
         } else if (sum(item_loads >= secondary_max, na.rm = TRUE) == 2) {
@@ -197,11 +193,9 @@ itemrest <- function(data,
   descriptives <- descriptive_stats(data)
   initial_efa <- efa_custom(data, n_factors_determined, cor_method, extract, rotate)
 
-  # Problemli maddeleri tespit et (yeni fonksiyona göre)
   problem_items <- identify_problem_items(initial_efa)
   all_problem_items <- sort_item_ids(unique(c(problem_items$cross_3, problem_items$cross_2, problem_items$low_loading)))
 
-  # Step 1: Print the initial report to the console
   cat("--- Settings and Descriptive Statistics ---\n")
   if (auto_n_factors_flag) {
     cat("Number of Factors (Auto):", n_factors_determined, "(Determined by Parallel Analysis)\n")
@@ -217,7 +211,6 @@ itemrest <- function(data,
   cat("Total Explained Variance:", paste0("% ", formatC(initial_efa$explained_var * 100, digits = 2, format = "f")), "\n")
   cat("Low-loading Items:", ifelse(length(problem_items$low_loading) == 0, "None", paste(problem_items$low_loading, collapse = ", ")), "\n")
 
-  # Çapraz yüklenen maddeleri doğru şekilde birleştirerek yazdır
   cross_items_combined <- c(problem_items$cross_2, problem_items$cross_3)
   cat("Cross-loading Items:", ifelse(length(cross_items_combined) == 0, "None", paste(unique(sort_item_ids(cross_items_combined)), collapse = ", ")), "\n")
 
@@ -230,7 +223,7 @@ itemrest <- function(data,
   if (length(all_problem_items) > 0) {
     all_combs <- get_combinations(all_problem_items)
 
-    # Step 2: Display the progress bar
+    # --- Display the progress bar ---
     cat("\n[Info] Testing", length(all_combs) - 1, "different removal combinations for low-quality items...\n")
     removal_summary <- test_removals(data, colnames(data), all_combs, n_factors_determined, cor_method, extract, rotate)
 
@@ -244,7 +237,7 @@ itemrest <- function(data,
   output <- list(
     descriptive_stats = descriptives,
     initial_efa = initial_efa,
-    problem_items = problem_items, # Bu liste artık cross_3 ve cross_2'yi içeriyor
+    problem_items = problem_items,
     all_problem_items_combined = all_problem_items,
     removal_summary = removal_summary,
     optimal_strategy = if (exists("optimal_strategy")) optimal_strategy else NULL,
@@ -295,6 +288,7 @@ print.itemrest_result <- function(x, report = "optimal", ...) {
       report_table <- x$removal_summary
     } else { # default to optimal
       header <- "\n--- Optimal Removal Strategies (No Cross-Loadings) ---\n"
+
       # For the optimal report, we only show strategies with No cross-loading
       report_table <- x$removal_summary[x$removal_summary$Cross_Loading == "No", ]
     }
@@ -303,6 +297,7 @@ print.itemrest_result <- function(x, report = "optimal", ...) {
     if (is.null(report_table) || nrow(report_table) == 0) {
       cat("No strategy matching this criterion was found.\n")
     } else {
+
       # Make the table more readable before printing
       display_table <- report_table
       display_table$Total_Explained_Var <- paste0("% ", formatC(display_table$Total_Explained_Var * 100, format = "f", digits = 2))
@@ -318,3 +313,11 @@ print.itemrest_result <- function(x, report = "optimal", ...) {
 
   invisible(x)
 }
+
+results <- itemrest(
+  data = data,
+  cor_method = "polychoric",
+  n_factors = 3,
+  extract = "uls",
+  rotate = "oblimin"
+)

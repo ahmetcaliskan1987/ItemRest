@@ -1,6 +1,6 @@
 Package: ItemRest
 Title: Automated Item Removal Strategies in Explatory Factor Analysis
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person("Ahmet", "Çalışkan", , "ahmet-caliskan@hotmail.com", role = c("aut", "cre"))
 Description: Provides tools for identifying and testing low-quality items in exploratory factor analysis (EFA)
