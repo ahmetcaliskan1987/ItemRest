@@ -314,10 +314,3 @@ print.itemrest_result <- function(x, report = "optimal", ...) {
   invisible(x)
 }
 
-results <- itemrest(
-  data = data,
-  cor_method = "polychoric",
-  n_factors = 3,
-  extract = "uls",
-  rotate = "oblimin"
-)
