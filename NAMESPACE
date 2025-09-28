@@ -2,3 +2,12 @@
 
 S3method(print,itemrest_result)
 export(itemrest)
+importFrom(gtools,mixedsort)
+importFrom(psych,alpha)
+importFrom(psych,fa)
+importFrom(psych,fa.parallel)
+importFrom(qgraph,cor_auto)
+importFrom(utils,capture.output)
+importFrom(utils,combn)
+importFrom(utils,setTxtProgressBar)
+importFrom(utils,txtProgressBar)

@@ -227,9 +227,13 @@ itemrest <- function(data,
     cat("\n[Info] Testing", length(all_combs) - 1, "different removal combinations for low-quality items...\n")
     removal_summary <- test_removals(data, colnames(data), all_combs, n_factors_determined, cor_method, extract, rotate)
 
-    optimal_candidates <- subset(removal_summary, Cross_Loading == "No")
+    optimal_candidates <- removal_summary[ removal_summary[["Cross_Loading"]] == "No",
+                                           , drop = FALSE ]
+
     if (nrow(optimal_candidates) > 0) {
-      optimal_strategy <- removal_summary[removal_summary$Cross_Loading == "No", ][1, ]
+      optimal_strategy <- optimal_candidates[1, , drop = FALSE]
+    } else {
+      optimal_strategy <- NULL
     }
   }
 

@@ -1,27 +1,25 @@
 Package: ItemRest
-Title: Automated Item Removal Strategies in Explatory Factor Analysis
+Title: Automated Item Removal Strategies for Exploratory Factor Analysis
 Version: 0.2.1
 Authors@R: 
-    person("Ahmet", "Çalışkan", , "ahmet-caliskan@hotmail.com", role = c("aut", "cre"))
-Description: Provides tools for identifying and testing low-quality items in exploratory factor analysis (EFA)
-    using automated strategies, including cross-loading and low-loading criteria. Generates summaries
-    for each removal strategy based on explained variance, factor loadings, and internal consistency.
+    c(
+      person(given = "Ahmet", family = "Çalışkan",
+             email = "ahmetcaliskan1987@gmail.com",
+             role = c("aut", "cre"))
+    )
+Description: Automates the identification and comparative evaluation of item-removal strategies in exploratory factor analysis, producing transparent summaries (explained variance, loading ranges, reliability) to support comfortable, replicable decisions.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
-Depends: R (>= 4.0.0)
-Imports:
+Depends: R (>= 4.1)
+Imports: 
+    gtools,
     psych,
-    GPArotation,
-    EFAtools,
     qgraph,
-    utils,
-    gtools
+    stats,
+    utils
 URL: https://github.com/ahmetcaliskan1987/ItemRest
 BugReports: https://github.com/ahmetcaliskan1987/ItemRest/issues
-Suggests: 
-    knitr,
-    rmarkdown
+Suggests: testthat (>= 3.0.0), knitr, rmarkdown
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
