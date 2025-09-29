@@ -1,12 +1,23 @@
-# CRAN comments for ItemRest 0.2.1
+# CRAN comments for ItemRest 0.2.2
+
+## Resubmission
+This resubmission addresses CRAN pretest NOTEs.
+
+* Excluded the `.github` folder from the build by adding `^\\.github$` to `.Rbuildignore`.
+* Fixed a spelling issue in DESCRIPTION (“reproducible” instead of “replicable”).
+* Updated version and NEWS.md accordingly.
 
 ## Test environments
-- Local: macOS 15.6.1, R 4.5.1
-- win-builder: devel, release, oldrelease — all OK
-- R-hub v2 (GitHub Actions): windows, macos-arm64, ubuntu-release — all OK
+* Local: macOS 14.x, R 4.4.x
+* win-builder: R-devel (Windows)
+* rhub: Ubuntu 22.04 (R-release), Fedora (R-devel), Windows (R-release)
 
 ## R CMD check results
-- 0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 0 notes
 
-## Notes for CRAN
-- None.
+## Reverse dependencies
+None (new package).
+
+## Additional notes
+All examples run quickly and do not require external services or network access.
+

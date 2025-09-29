@@ -1,6 +1,4 @@
-1# ItemRest 0.2.2
-
-# ToOoOlTiPs 0.2.2
+# ItemRest 0.2.2
 
 - Resubmission to CRAN.
 - Added `^\.github$` to `.Rbuildignore` to exclude the .github folder.

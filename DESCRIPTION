@@ -1,13 +1,13 @@
 Package: ItemRest
 Title: Automated Item Removal Strategies for Exploratory Factor Analysis
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: 
     c(
       person(given = "Ahmet", family = "Çalışkan",
              email = "ahmetcaliskan1987@gmail.com",
              role = c("aut", "cre"))
     )
-Description: Automates the identification and comparative evaluation of item-removal strategies in exploratory factor analysis, producing transparent summaries (explained variance, loading ranges, reliability) to support comfortable, replicable decisions.
+Description: Automates the identification and comparative evaluation of item-removal strategies in exploratory factor analysis, producing transparent summaries (explained variance, loading ranges, reliability) to support comfortable, reproducible decisions.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.1)
