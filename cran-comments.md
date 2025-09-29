@@ -13,7 +13,12 @@ This resubmission addresses CRAN pretest NOTEs.
 * rhub: Ubuntu 22.04 (R-release), Fedora (R-devel), Windows (R-release)
 
 ## R CMD check results
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 note
+
+* On R-devel (win-builder) there is one NOTE:
+  "checking CRAN incoming feasibility ... NOTE
+   New submission"
+  This is expected for a first-time submission.
 
 ## Reverse dependencies
 None (new package).
