@@ -161,10 +161,11 @@ test_removals <- function(data, base_items, combs, n_factors, cor_method, extrac
 #' Evaluate Item Removal Strategies for Exploratory Factor Analysis (EFA)
 #'
 #' @description
-#' This function identifies low-quality items (low-loading or cross-loading)
-#' based on initial EFA results, then tests different combinations of removing
-#' these items to find optimal model fit. It returns an object containing all
-#' results. It only prints progress information to the console during computation.
+#' This function automates the process of identifying low-quality items (those
+#' with low factor loadings or significant cross-loadings) in an Exploratory
+#' Factor Analysis (EFA). It systematically tests various combinations of
+#' removing these problematic items and evaluates the impact on model fit,
+#' returning a comprehensive summary of all tested strategies.
 #'
 #' @param data A numeric `data.frame` or `matrix` for the analysis.
 #' @param cor_method The correlation method to use, e.g., `"pearson"` or `"polychoric"`.
@@ -172,8 +173,44 @@ test_removals <- function(data, base_items, combs, n_factors, cor_method, extrac
 #' @param extract The factor extraction (estimation) method. See `psych::fa`. Default is `"uls"`.
 #' @param rotate The rotation method. See `psych::fa`. Default is `"oblimin"`.
 #'
-#' @return An object of class `itemrest_result`.
+#' @return An object of class `itemrest_result`. This is a list containing the
+#'   following components:
+#'   \item{descriptive_stats}{Basic descriptive statistics of the input data.}
+#'   \item{initial_efa}{The results of the initial EFA before any items are removed.}
+#'   \item{problem_items}{A list of items identified as low-loading or cross-loading.}
+#'   \item{removal_summary}{A data.frame summarizing the results of all tested removal strategies.}
+#'   \item{optimal_strategy}{The best-performing strategy that resulted in a clean factor structure (no cross-loadings).}
+#'   \item{settings}{A list of the settings used for the analysis.}
+#'
 #' @export
+#'
+#' @examples
+#' \donttest{
+#' # We will use the 'bfi' dataset from the 'psych' package.
+#' # This requires the 'psych' package to be installed.
+#' if (requireNamespace("psych", quietly = TRUE)) {
+#'   data(bfi, package = "psych")
+#'
+#'   # 1. Prepare the data: Select the personality items (first 25 columns)
+#'   #    and remove rows with missing values for this example.
+#'   example_data <- bfi[, 1:25]
+#'   example_data <- na.omit(example_data)
+#'
+#'   # 2. Run the item removal analysis.
+#'   #    Based on theory, the Big Five model has 5 factors.
+#'   results <- itemrest(
+#'     data = example_data,
+#'     n_factors = 5,
+#'     cor_method = "pearson" # Data is not ordinal, so pearson is appropriate
+#'   )
+#'
+#'   # 3. Print the report for optimal strategies (default).
+#'   print(results)
+#'
+#'   # 4. Print the report for all tested strategies.
+#'   print(results, report = "all")
+#' }
+#' }
 itemrest <- function(data,
                      cor_method = "pearson",
                      n_factors = NULL,
@@ -196,25 +233,25 @@ itemrest <- function(data,
   problem_items <- identify_problem_items(initial_efa)
   all_problem_items <- sort_item_ids(unique(c(problem_items$cross_3, problem_items$cross_2, problem_items$low_loading)))
 
-  cat("--- Settings and Descriptive Statistics ---\n")
+  message("--- Settings and Descriptive Statistics ---")
   if (auto_n_factors_flag) {
-    cat("Number of Factors (Auto):", n_factors_determined, "(Determined by Parallel Analysis)\n")
+    message("Number of Factors (Auto): ", n_factors_determined, " (Determined by Parallel Analysis)")
   } else {
-    cat("Number of Factors (Manual):", n_factors_determined, "\n")
+    message("Number of Factors (Manual): ", n_factors_determined)
   }
-  cat("Number of Items:", descriptives$n_items, "\n")
-  cat("Number of Observations:", descriptives$n_obs, "\n")
-  cat("Minimum Value:", descriptives$min_value, "\n")
-  cat("Maximum Value:", descriptives$max_value, "\n")
-  cat("\n--- Initial EFA Results (No items removed) ---\n")
-  cat("Cronbach's Alpha:", formatC(initial_efa$alpha, digits = 3, format = "f"), "\n")
-  cat("Total Explained Variance:", paste0("% ", formatC(initial_efa$explained_var * 100, digits = 2, format = "f")), "\n")
-  cat("Low-loading Items:", ifelse(length(problem_items$low_loading) == 0, "None", paste(problem_items$low_loading, collapse = ", ")), "\n")
+  message("Number of Items: ", descriptives$n_items)
+  message("Number of Observations: ", descriptives$n_obs)
+  message("Minimum Value: ", descriptives$min_value)
+  message("Maximum Value: ", descriptives$max_value)
+  message("\n--- Initial EFA Results (No items removed) ---")
+  message("Cronbach's Alpha: ", formatC(initial_efa$alpha, digits = 3, format = "f"))
+  message("Total Explained Variance: % ", formatC(initial_efa$explained_var * 100, digits = 2, format = "f"))
+  message("Low-loading Items: ", ifelse(length(problem_items$low_loading) == 0, "None", paste(problem_items$low_loading, collapse = ", ")))
 
   cross_items_combined <- c(problem_items$cross_2, problem_items$cross_3)
-  cat("Cross-loading Items:", ifelse(length(cross_items_combined) == 0, "None", paste(unique(sort_item_ids(cross_items_combined)), collapse = ", ")), "\n")
+  message("Cross-loading Items: ", ifelse(length(cross_items_combined) == 0, "None", paste(unique(sort_item_ids(cross_items_combined)), collapse = ", ")))
 
-  cat("\nAll Identified Low-Quality Items:", ifelse(length(all_problem_items) == 0, "None", paste(all_problem_items, collapse = ", ")), "\n")
+  message("\nAll Identified Low-Quality Items: ", ifelse(length(all_problem_items) == 0, "None", paste(all_problem_items, collapse = ", ")))
 
   # --- Test Removal Strategies ---
   removal_summary <- NULL
@@ -224,7 +261,7 @@ itemrest <- function(data,
     all_combs <- get_combinations(all_problem_items)
 
     # --- Display the progress bar ---
-    cat("\n[Info] Testing", length(all_combs) - 1, "different removal combinations for low-quality items...\n")
+    message("\n[Info] Testing ", length(all_combs) - 1, " different removal combinations for low-quality items...")
     removal_summary <- test_removals(data, colnames(data), all_combs, n_factors_determined, cor_method, extract, rotate)
 
     optimal_candidates <- removal_summary[ removal_summary[["Cross_Loading"]] == "No",
@@ -269,11 +306,28 @@ itemrest <- function(data,
 #' @param x An object of class `itemrest_result`.
 #' @param report The type of report to generate: `"optimal"` (default) or `"all"`.
 #' @param ... Other arguments (not used).
+#'
+#' @return No return value, called for side effects (prints the report to the console).
 #' @export
+#'
+#' @examples
+#' \donttest{
+#' if (requireNamespace("psych", quietly = TRUE)) {
+#'   data(bfi, package = "psych")
+#'   example_data <- na.omit(bfi[, 1:25])
+#'   results <- itemrest(example_data, n_factors = 5)
+#'
+#'   # Print the default optimal report
+#'   print(results)
+#'
+#'   # Print the report of all strategies
+#'   print(results, report = "all")
+#' }
+#' }
 print.itemrest_result <- function(x, report = "optimal", ...) {
 
+  # Initial info is printed by itemrest() during computation.
   # This function only prints the final result tables and the final message.
-  # Initial info is already printed by itemrest() during computation.
 
   # Header
   cat("\n==============================\n")
@@ -317,4 +371,3 @@ print.itemrest_result <- function(x, report = "optimal", ...) {
 
   invisible(x)
 }
-

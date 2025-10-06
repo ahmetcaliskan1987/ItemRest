@@ -1,28 +1,15 @@
-# CRAN comments for ItemRest 0.2.2
-
 ## Resubmission
-This resubmission addresses CRAN pretest NOTEs.
 
-* Excluded the `.github` folder from the build by adding `^\\.github$` to `.Rbuildignore`.
-* Fixed a spelling issue in DESCRIPTION (“reproducible” instead of “replicable”).
-* Updated version and NEWS.md accordingly.
+This is a resubmission of the ItemRest package (version 0.2.3).
 
-## Test environments
-* Local: macOS 14.x, R 4.4.x
-* win-builder: R-devel (Windows)
-* rhub: Ubuntu 22.04 (R-release), Fedora (R-devel), Windows (R-release)
+I have addressed all the points raised by the reviewer, Konstanze Lauseker, in the previous submission. In summary:
 
-## R CMD check results
-0 errors | 0 warnings | 1 note
+* A co-author has been added to the `DESCRIPTION` file.
+* References have been added to the `Description` field.
+* All exported functions now have detailed documentation (`@return`, `@examples`).
+* `cat()` calls have been replaced with `message()` in the main computation function.
+* The vignette has been rewritten as a proper step-by-step guide in English.
 
-* On R-devel (win-builder) there is one NOTE:
-  "checking CRAN incoming feasibility ... NOTE
-   New submission"
-  This is expected for a first-time submission.
+The package passes `R CMD check --as-cran` with 0 errors and 0 warnings. The only remaining NOTE is about "New submission," which is expected.
 
-## Reverse dependencies
-None (new package).
-
-## Additional notes
-All examples run quickly and do not require external services or network access.
-
+Thank you for your time and consideration.

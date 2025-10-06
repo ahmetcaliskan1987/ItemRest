@@ -13,6 +13,24 @@
 
 \item{...}{Other arguments (not used).}
 }
+\value{
+No return value, called for side effects (prints the report to the console).
+}
 \description{
 Print method for \code{itemrest_result} class
+}
+\examples{
+\donttest{
+if (requireNamespace("psych", quietly = TRUE)) {
+  data(bfi, package = "psych")
+  example_data <- na.omit(bfi[, 1:25])
+  results <- itemrest(example_data, n_factors = 5)
+
+  # Print the default optimal report
+  print(results)
+
+  # Print the report of all strategies
+  print(results, report = "all")
+}
+}
 }
