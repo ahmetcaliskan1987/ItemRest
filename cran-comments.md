@@ -1,20 +1,16 @@
-Markdown
-## Resubmission
+## Update
 
-This is a resubmission of the ItemRest package (version 0.2.4). 
+This is an update for the ItemRest package (version 0.2.5). 
 
-I have addressed the feedback from users regarding the flexibility of the item removal criteria. The following updates have been implemented:
+This version fixes a minor but important reporting bug discovered in the previous version (0.2.4) regarding the display of factor loading ranges.
 
-* Added a `min_loading` parameter to the `itemrest()` function, allowing users to define their own threshold for identifying low-loading items (default is set to 0.30).
-* Added a `loading_diff` parameter to allow for flexible cross-loading identification.
-* Updated the default threshold for cross-loading differences to 0.10, as requested by users.
-* Included support for Howard (2016) heuristics by allowing the `loading_diff` argument to be set to `"howard"`.
-* Updated the `identify_problem_items()` and `test_removals()` internal functions to support these new parameters.
-* All documentation, examples, and the package vignette have been updated to reflect these changes.
+* Fixed: The `loading_range` calculation in the summary table was incorrectly using absolute values. It has been updated to use raw loading values to correctly preserve and display negative signs, as required by psychometric reporting standards.
+* No changes were made to the core logic or the automated selection algorithm.
 
 ## Test results
 
 The package passes `R CMD check --as-cran` with 0 errors and 0 warnings.
+There is 1 NOTE regarding "future file timestamps" due to a local system clock synchronization issue, which does not affect package functionality.
 
 Tested on:
 * Local Windows 11 installation, R 4.3.1
